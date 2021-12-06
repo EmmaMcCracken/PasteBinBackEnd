@@ -26,12 +26,31 @@ app.use(cors()) //add CORS support to each following route handler
 const client = new Client(dbConfig);
 client.connect();
 
+// GET 10 most recent pastes
 app.get("/", async (req, res) => {
   const dbres = await client.query('SELECT * FROM pastes ORDER BY date DESC LIMIT 10');
   res.json(dbres.rows);
 });
 
+// GET specific paste by id
 app.get("/:n", async (req, res) => {
+  const n = req.params.n;
+  const dbres = await client.query('SELECT * FROM pastes WHERE id = $1', [n]);
+  const result = dbres.rows;
+  if (result.length === 1) {
+    res.status(200).json({
+      status: 'success',
+      data: result
+    })
+  } else {
+    res.status(404).json({
+      status: 'failed: id does not exist',
+    })
+  }
+});
+
+// GET n most recent pastes
+app.get("/pastes/:n", async (req, res) => {
   const n = req.params.n;
   const dbres = await client.query('SELECT * FROM pastes ORDER BY date DESC LIMIT $1', [n]);
   res.json(dbres.rows);
