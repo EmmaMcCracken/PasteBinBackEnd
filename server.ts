@@ -27,10 +27,31 @@ const client = new Client(dbConfig);
 client.connect();
 
 app.get("/", async (req, res) => {
-  const dbres = await client.query('select * from pastes');
+  const dbres = await client.query('SELECT * FROM pastes ORDER BY date DESC LIMIT 10');
   res.json(dbres.rows);
 });
 
+app.get("/:n", async (req, res) => {
+  const n = req.params.n;
+  const dbres = await client.query('SELECT * FROM pastes ORDER BY date DESC LIMIT $1', [n]);
+  res.json(dbres.rows);
+});
+
+app.post("/", async (req, res) => {
+  const {title, text} = req.body;
+  if (typeof text === 'string') {
+    const dbres = await client.query('INSERT INTO pastes (title, text) VALUES ($1, $2) returning *', [title, text]);
+    res.status(200).json({
+      status: 'success',
+      data: dbres.rows
+    })
+  } else {
+    res.status(404).json({
+      status: 'failed: text expects a string',
+      data: req.body
+    })
+  }
+});
 
 //Start the server on the given port
 const port = process.env.PORT;
