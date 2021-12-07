@@ -107,6 +107,52 @@ app.delete("/:id", async (req, res) => {
   }
 });
 
+// Update specific paste by id
+app.put("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { title, text } = req.body;
+  let result = [];
+  if (
+    typeof title === "string" &&
+    title.length < 51 &&
+    typeof text === "string"
+  ) {
+    const dbres = await client.query(
+      "UPDATE pastes SET title = $1, text = $2 WHERE id = $3 returning *",
+      [title, text, id]
+    );
+    result = dbres.rows;
+  } else if (title === undefined && typeof text === "string") {
+    const dbres = await client.query(
+      "UPDATE pastes SET text = $1 WHERE id = $2 returning *",
+      [text, id]
+    );
+    result = dbres.rows;
+  } else if (
+    text === undefined &&
+    typeof title === "string" &&
+    title.length < 51
+  ) {
+    const dbres = await client.query(
+      "UPDATE pastes SET title = $1 WHERE id = $2 returning *",
+      [title, id]
+    );
+    result = dbres.rows;
+  }
+  if (result.length === 1) {
+    res.status(200).json({
+      status: "success",
+      data: result,
+    });
+  } else {
+    res.status(404).json({
+      status:
+        "failed: id does not exist, title should not exceed 50 characters, body should contain atleast a title or text",
+      data: id,
+    });
+  }
+});
+
 //Start the server on the given port
 const port = process.env.PORT;
 if (!port) {
