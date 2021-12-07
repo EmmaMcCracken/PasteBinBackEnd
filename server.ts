@@ -63,7 +63,12 @@ app.get("/pastes/:n", async (req, res) => {
 
 app.post("/", async (req, res) => {
   const { title, text } = req.body;
-  if (typeof text === "string") {
+
+  if (
+    typeof text === "string" &&
+    ((typeof title === "string" && title.length < 51) || title === undefined) &&
+    text !== ""
+  ) {
     const dbres = await client.query(
       "INSERT INTO pastes (title, text) VALUES ($1, $2) returning *",
       [title, text]
@@ -74,7 +79,8 @@ app.post("/", async (req, res) => {
     });
   } else {
     res.status(404).json({
-      status: "failed: text expects a string",
+      status:
+        "failed: text expects a non-empty string, (optional) title should not exceed 50 characters",
       data: req.body,
     });
   }
