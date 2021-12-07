@@ -86,6 +86,27 @@ app.post("/", async (req, res) => {
   }
 });
 
+// DELETE specific paste by id
+app.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const dbres = await client.query(
+    "DELETE FROM pastes WHERE id = $1 returning *",
+    [id]
+  );
+  const result = dbres.rows;
+  if (result.length === 1) {
+    res.status(200).json({
+      status: "success",
+      data: result,
+    });
+  } else {
+    res.status(404).json({
+      status: "failed: id does not exist",
+      data: id,
+    });
+  }
+});
+
 //Start the server on the given port
 const port = process.env.PORT;
 if (!port) {
