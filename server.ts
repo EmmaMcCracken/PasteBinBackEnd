@@ -108,8 +108,8 @@ app.delete("/pastes/:id", async (req, res) => {
 });
 
 // Update specific paste by id
-app.put("/pastes/:id", async (req, res) => {
-  const id = parseInt(req.params.id);
+app.put("/pastes/:paste_id", async (req, res) => {
+  const paste_id = parseInt(req.params.paste_id);
   const { title, text } = req.body;
   let result = [];
   if (
@@ -119,13 +119,13 @@ app.put("/pastes/:id", async (req, res) => {
   ) {
     const dbres = await client.query(
       "UPDATE pastes SET title = $1, text = $2 WHERE id = $3 returning *",
-      [title, text, id]
+      [title, text, paste_id]
     );
     result = dbres.rows;
-  } else if (title === undefined && typeof text === "string") {
+  } else if (title === undefined && typeof text === "string" && text !== "") {
     const dbres = await client.query(
       "UPDATE pastes SET text = $1 WHERE id = $2 returning *",
-      [text, id]
+      [text, paste_id]
     );
     result = dbres.rows;
   } else if (
@@ -135,7 +135,7 @@ app.put("/pastes/:id", async (req, res) => {
   ) {
     const dbres = await client.query(
       "UPDATE pastes SET title = $1 WHERE id = $2 returning *",
-      [title, id]
+      [title, paste_id]
     );
     result = dbres.rows;
   }
@@ -147,8 +147,8 @@ app.put("/pastes/:id", async (req, res) => {
   } else {
     res.status(404).json({
       status:
-        "failed: id does not exist, title should not exceed 50 characters, body should contain atleast a title or text",
-      data: id,
+        "failed: paste_id does not exist, title should not exceed 50 characters, body should contain atleast a non-emptytitle or text",
+      data: { title: title, text: text, paste_id: paste_id },
     });
   }
 });
@@ -162,11 +162,11 @@ app.get("/comments", async (req, res) => {
 });
 
 // GET specific comment by comment_id
-app.get("/comments/:n", async (req, res) => {
-  const n = req.params.n;
+app.get("/comments/:comment_id", async (req, res) => {
+  const comment_id = req.params.comment_id;
   const dbres = await client.query(
     "SELECT * FROM comments WHERE comment_id = $1",
-    [n]
+    [comment_id]
   );
   const result = dbres.rows;
   if (result.length === 1) {
@@ -241,8 +241,8 @@ app.post("/comments/:paste_id", async (req, res) => {
 });
 
 // DELETE specific paste by id
-app.delete("/comments/:id", async (req, res) => {
-  const id = parseInt(req.params.id);
+app.delete("/comments/:paste_id", async (req, res) => {
+  const id = parseInt(req.params.paste_id);
   const dbres = await client.query(
     "DELETE FROM comments WHERE comment_id = $1 returning *",
     [id]
@@ -262,8 +262,8 @@ app.delete("/comments/:id", async (req, res) => {
 });
 
 // Update specific comment by id
-app.put("/comments/:id", async (req, res) => {
-  const id = parseInt(req.params.id);
+app.put("/comments/:comment_id", async (req, res) => {
+  const id = parseInt(req.params.comment_id);
   const { text } = req.body;
   let result = [];
   if (typeof text === "string" && text !== "") {
