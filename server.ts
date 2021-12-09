@@ -153,11 +153,9 @@ app.put("/pastes/:paste_id", async (req, res) => {
   }
 });
 
-// GET 10 most recent comments
+// GET all comments
 app.get("/comments", async (req, res) => {
-  const dbres = await client.query(
-    "SELECT * FROM comments ORDER BY date DESC LIMIT 10"
-  );
+  const dbres = await client.query("SELECT * FROM comments ORDER BY date DESC");
   res.json(dbres.rows);
 });
 
