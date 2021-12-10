@@ -1,13 +1,36 @@
-# mark-fullstack-proj--starter-1
+# Paste Bin Back-end
+Back-end for a simple paste bin application for copying and pasting text to/from your clipboard.
 
-## Usage:
+[https://github.com/EmmaMcCracken/PasteBinFrontEnd](https://github.com/EmmaMcCracken/PasteBinFrontEnd)
 
-Instead of cloning this project, click "Use this template".  This will allow you to create a repo on github which has this project's content but which is not a fork of it.
+## Table of contents
+1. Technologies
+2. Setup
+3. Install dependencies
+4. DB Setup
+5. Running locally
+6. Running on heroku
 
-Make sure you create the repo as being owned by your own account not by the WeAreAcademy organisation.
+## Technologies
+Project is created with:
+- Cors: ^2.8.5
+- Typescript: ^4.1.3
+- Eslint: ^7.28.0
+- Prettier: 2.3.1
+- Postgres: ^8.5.1
+- Express: ^4.17.1
+- Dotenv: ^8.2.0
 
+## Setup
+To run this project, fork and copy the SSH (or HTTPS) link to your clipboard. Then run the command
 
-## Install
+```bash
+$ git clone <link>
+```
+
+in your terminal to clone the repository.
+
+## Install dependencies
 
 `yarn`
 
