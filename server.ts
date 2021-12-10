@@ -26,11 +26,9 @@ app.use(cors()); //add CORS support to each following route handler
 const client = new Client(dbConfig);
 client.connect();
 
-// GET 10 most recent pastes
+// GET all pastes
 app.get("/pastes", async (req, res) => {
-  const dbres = await client.query(
-    "SELECT * FROM pastes ORDER BY date DESC LIMIT 10"
-  );
+  const dbres = await client.query("SELECT * FROM pastes ORDER BY date DESC");
   res.json(dbres.rows);
 });
 
